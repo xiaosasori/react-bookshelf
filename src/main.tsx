@@ -1,11 +1,9 @@
-// import './bootstrap'
+import './bootstrap'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import './index.css'
 import App from './App'
 // @ts-ignore
-import {server} from './test/server/dev-server.js'
-
+import { server } from './test/server/dev-server.js'
 
 async function prepare() {
   // if (import.meta.env.DEV) {
@@ -14,10 +12,10 @@ async function prepare() {
   return server.start()
 }
 prepare().then(() => {
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-)
-});
+  ReactDOM.render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>,
+    document.getElementById('root'),
+  )
+})
