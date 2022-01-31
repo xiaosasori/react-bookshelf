@@ -6,7 +6,7 @@ function FullPageSpinner() {
     <div
       className="grid h-screen text-3xl place-items-center"
     >
-      <FaSpinner className="animate-spin" />
+      <FaSpinner className="animate-spin" aria-label="loading" />
     </div>
   )
 }

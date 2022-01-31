@@ -6,7 +6,7 @@ import { useSafeDispatch } from './useSafeDispatch'
 //   run(fetchPokemon(pokemonName))
 // }, [pokemonName, run])
 const defaultInitialState = { status: 'idle', data: null, error: null }
-function useAsync<T = any>(initialState: T) {
+function useAsync<T = any>(initialState?: T) {
   const initialStateRef = React.useRef({
     ...defaultInitialState,
     ...initialState,
