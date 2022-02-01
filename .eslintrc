@@ -1,9 +1,10 @@
 {
-  "extends": "@antfu",
+  "extends": ["react-app", "@antfu"],
   "rules": {
     "no-console": "warn",
     "@typescript-eslint/ban-ts-comment": "off",
-    "@typescript-eslint/prefer-ts-expect-error": "off"
+    "@typescript-eslint/prefer-ts-expect-error": "off",
+    "import/no-named-as-default": "off"
   }
   // "root": true,
   // "parser": "@typescript-eslint/parser",

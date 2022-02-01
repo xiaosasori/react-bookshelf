@@ -7,37 +7,28 @@ import Spinner from '@/components/base/Spinner'
 import * as colors from '@/styles/colors'
 import BookRow from '@/components/BookRow'
 import { getBooks } from '@/api'
+import { useAsync } from '@/hooks'
+import type { Book } from '@/types'
 
 function Discover() {
   const [query, setQuery] = React.useState('')
   const [queried, setQueried] = React.useState<boolean>()
-  const [books, setData] = React.useState([])
-  const [status, setStatus] = React.useState('idle')
-  const [error, setError] = React.useState(null)
+  const { data, error, run, isLoading, isError, isSuccess } = useAsync()
   // const {books, error, isLoading, isError, isSuccess} = useBookSearch(query)
   // const refetchBookSearchQuery = useRefetchBookSearchQuery()
-  const isLoading = status === 'loading'
-  const isSuccess = status === 'success'
-  const isError = status === 'error'
   // React.useEffect(() => {
   //   return () => refetchBookSearchQuery()
   // }, [refetchBookSearchQuery])
 
   React.useEffect(() => {
-    setStatus('loading')
-    getBooks(query).then((res: any) => {
-      setData(res.books)
-      setStatus('success')
-    })
-      .catch((error) => {
-        setError(error)
-        setStatus('error')
-      })
-  }, [query])
+    if (!queried) return
+    run(getBooks(query))
+  }, [queried, query, run])
 
   function handleSearchClick(event: FormEvent) {
     event.preventDefault()
     setQueried(true)
+    // @ts-ignore
     setQuery((event.target as HTMLFormElement).elements.search.value)
   }
 
@@ -99,27 +90,27 @@ function Discover() {
                     <Spinner />
                   </div>
                 )
-                : isSuccess && books.length
+                : isSuccess && data.books.length
                   ? (
                     <p>Here you go! Find more books with the search bar above.</p>
                   )
-                  : isSuccess && !books.length
+                  : isSuccess && !data.books.length
                     ? (
                       <p>
-                Hmmm... I couldn't find any books to suggest for you. Sorry.
+                Hmmm... I couldn&apos;t find any books to suggest for you. Sorry.
                       </p>
                     )
                     : null}
             </div>
           )}
-        {books.length
+        {data?.books.length
           ? (
             // <Profiler
             //   id="Discover Books Screen Book List"
-            //   metadata={{ query, bookCount: books.length }}
+            //   metadata={{ query, bookCount: data.books.length }}
             // >
             <ul className="mt-5 list-none grid gap-4 grid-rows-[repeat(auto-fill,_minmax(100px,_1fr))]">
-              {books.map(book => (
+              {data.books.map((book: Book) => (
                 <li key={book.id} aria-label={book.title}>
                   <BookRow key={book.id} book={book} />
                 </li>
