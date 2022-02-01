@@ -1,33 +1,31 @@
 import React from 'react'
 import { useQueryClient } from 'react-query'
-// import * as auth from 'auth-provider'
+import * as auth from '@/auth-provider'
 // import {client} from 'utils/api-client'
 import { useAsync } from '@/hooks'
 // import {setQueryDataForBook} from 'utils/books'
 import FullPageSpinner from '@/components/FullPageSpinner'
 import FullPageErrorFallback from '@/components/FullPageErrorFallback'
 
-const queryClient = useQueryClient()
-
-async function bootstrapAppData() {
-  const user = null
-
-  // const token = await auth.getToken()
-  // if (token) {
-  //   const data = await client('bootstrap', {token})
-  //   queryClient.setQueryData('list-items', data.listItems)
-  //   for (const listItem of data.listItems) {
-  //     setQueryDataForBook(listItem.book)
-  //   }
-  //   user = data.user
-  // }
-  // return user
-}
-
 const AuthContext = React.createContext()
 AuthContext.displayName = 'AuthContext'
 
 function AuthProvider(props: any) {
+  const queryClient = useQueryClient()
+  async function bootstrapAppData() {
+    const user: any = null
+    const token = await auth.getToken()
+    if (token) {
+      const data = await client('bootstrap', { token })
+      queryClient.setQueryData('list-items', data.listItems)
+      // for (const listItem of data.listItems) {
+      //   setQueryDataForBook(listItem.book)
+      // }
+      user = data.user
+    }
+    return user
+  }
+
   const {
     data: user,
     status,
