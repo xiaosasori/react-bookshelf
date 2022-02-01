@@ -1,8 +1,9 @@
 import type { EmotionJSX } from '@emotion/react/types/jsx-namespace'
 import type { FormEvent } from 'react'
 import React from 'react'
-import { FaSpinner } from 'react-icons/fa'
+import Spinner from './base/Spinner'
 import ErrorMessage from './ErrorMessage'
+import Input from './base/Input'
 import { useAsync } from '@/hooks'
 
 interface Props {
@@ -28,11 +29,11 @@ function LoginForm({ onSubmit, submitButton }: Props) {
     <form onSubmit={handleSubmit} className="flex flex-col items-stretch space-y-4">
       <div className="flex flex-col">
         <label htmlFor="username">Username</label>
-        <input id="username" className="rounded border border-[#f1f1f4] bg-[#f1f2f7] py-2 px-3" />
+        <Input id="username" />
       </div>
       <div className="flex flex-col">
         <label htmlFor="password">Password</label>
-        <input id="password" className="rounded border border-[#f1f1f4] bg-[#f1f2f7] py-2 px-3" />
+        <Input id="password" />
       </div>
       <div>
         {React.cloneElement(
@@ -41,7 +42,7 @@ function LoginForm({ onSubmit, submitButton }: Props) {
           ...(Array.isArray(submitButton.props.children)
             ? submitButton.props.children
             : [submitButton.props.children]),
-          isLoading ? <FaSpinner className="ml-1 animate-spin" /> : null,
+          !isLoading ? <Spinner /> : null,
         )}
       </div>
       {isError ? <ErrorMessage error={error} /> : null}

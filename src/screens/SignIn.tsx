@@ -1,5 +1,5 @@
 import Logo from '@/components/Logo'
-import Button from '@/components/Button'
+import Button from '@/components/base/Button'
 import { Modal, ModalContents, ModalOpenButton } from '@/components/Modal'
 import LoginForm from '@/components/LoginForm'
 
