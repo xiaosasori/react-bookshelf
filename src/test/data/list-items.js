@@ -12,14 +12,15 @@ const load = () =>
 // initialize
 try {
   load()
-} catch (error) {
+}
+catch (error) {
   persist()
   // ignore json parse error
 }
 
 window.__bookshelf = window.__bookshelf || {}
 window.__bookshelf.purgeListItems = () => {
-  Object.keys(listItems).forEach(key => {
+  Object.keys(listItems).forEach((key) => {
     delete listItems[key]
   })
   persist()
@@ -45,7 +46,7 @@ async function create({
   const id = hash(`${bookId}${ownerId}`)
   if (listItems[id]) {
     const error = new Error(
-      `This user cannot create new list item for that book`,
+      'This user cannot create new list item for that book',
     )
     error.status = 400
     throw error
@@ -56,7 +57,7 @@ async function create({
     error.status = 400
     throw error
   }
-  listItems[id] = {id, bookId, ownerId, rating, notes, finishDate, startDate}
+  listItems[id] = { id, bookId, ownerId, rating, notes, finishDate, startDate }
   persist()
   return read(id)
 }
@@ -82,7 +83,7 @@ async function remove(id) {
 
 async function readMany(userId, listItemIds) {
   return Promise.all(
-    listItemIds.map(id => {
+    listItemIds.map((id) => {
       authorize(userId, id)
       return read(id)
     }),
@@ -103,12 +104,12 @@ function validateListItem(id) {
 }
 
 function hash(str) {
-  var hash = 5381,
-    i = str.length
+  let hash = 5381
+  let i = str.length
 
-  while (i) {
+  while (i)
     hash = (hash * 33) ^ str.charCodeAt(--i)
-  }
+
   return String(hash >>> 0)
 }
 
@@ -123,4 +124,4 @@ async function reset() {
   persist()
 }
 
-export {authorize, create, read, update, remove, readMany, readByOwner, reset}
+export { authorize, create, read, update, remove, readMany, readByOwner, reset }

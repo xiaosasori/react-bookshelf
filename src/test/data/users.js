@@ -8,20 +8,21 @@ const load = () =>
 // initialize
 try {
   load()
-} catch (error) {
+}
+catch (error) {
   persist()
   // ignore json parse error
 }
 
 window.__bookshelf = window.__bookshelf || {}
 window.__bookshelf.purgeUsers = () => {
-  Object.keys(users).forEach(key => {
+  Object.keys(users).forEach((key) => {
     delete users[key]
   })
   persist()
 }
 
-function validateUserForm({username, password}) {
+function validateUserForm({ username, password }) {
   if (!username) {
     const error = new Error('A username is required')
     error.status = 400
@@ -34,20 +35,20 @@ function validateUserForm({username, password}) {
   }
 }
 
-async function authenticate({username, password}) {
-  validateUserForm({username, password})
+async function authenticate({ username, password }) {
+  validateUserForm({ username, password })
   const id = hash(username)
   const user = users[id] || {}
-  if (user.passwordHash === hash(password)) {
-    return {...sanitizeUser(user), token: btoa(user.id)}
-  }
+  if (user.passwordHash === hash(password))
+    return { ...sanitizeUser(user), token: btoa(user.id) }
+
   const error = new Error('Invalid username or password')
   error.status = 400
   throw error
 }
 
-async function create({username, password}) {
-  validateUserForm({username, password})
+async function create({ username, password }) {
+  validateUserForm({ username, password })
   const id = hash(username)
   const passwordHash = hash(password)
   if (users[id]) {
@@ -57,7 +58,7 @@ async function create({username, password}) {
     error.status = 400
     throw error
   }
-  users[id] = {id, username, passwordHash}
+  users[id] = { id, username, passwordHash }
   persist()
   return read(id)
 }
@@ -68,7 +69,7 @@ async function read(id) {
 }
 
 function sanitizeUser(user) {
-  const {passwordHash, ...rest} = user
+  const { passwordHash, ...rest } = user
   return rest
 }
 
@@ -96,12 +97,12 @@ function validateUser(id) {
 }
 
 function hash(str) {
-  var hash = 5381,
-    i = str.length
+  let hash = 5381
+  let i = str.length
 
-  while (i) {
+  while (i)
     hash = (hash * 33) ^ str.charCodeAt(--i)
-  }
+
   return String(hash >>> 0)
 }
 
@@ -110,4 +111,4 @@ async function reset() {
   persist()
 }
 
-export {authenticate, create, read, update, remove, reset}
+export { authenticate, create, read, update, remove, reset }

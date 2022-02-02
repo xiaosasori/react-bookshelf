@@ -10,14 +10,14 @@ import './dev-server'
 // } else if (import.meta.env.NODE_ENV === 'test') {
 //   import './test-server'
 // } else {
-  // in normal apps you'll not do anything in this case
-  // but for this workshop app, we're actually going to
-  // deploy our mock service worker to production
-  // so normally, this condition would just look like this:
+// in normal apps you'll not do anything in this case
+// but for this workshop app, we're actually going to
+// deploy our mock service worker to production
+// so normally, this condition would just look like this:
 
-  // module.exports = ""
+// module.exports = ""
 
-  // but for us, since we're shipping the dev server to prod
-  // we'll do the same thing we did for development:
+// but for us, since we're shipping the dev server to prod
+// we'll do the same thing we did for development:
 //   import './dev-server'
 // }

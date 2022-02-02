@@ -27,7 +27,7 @@ function buildListItem(overrides = {}) {
     bookId = overrides.book ? overrides.book.id : faker.datatype.uuid(),
     startDate = faker.date.past(2).getTime(),
     finishDate = faker.date.between(new Date(startDate), new Date()).getTime(),
-    owner = {ownerId: faker.datatype.uuid()},
+    owner = { ownerId: faker.datatype.uuid() },
   } = overrides
   return {
     id: faker.datatype.uuid(),
@@ -37,9 +37,9 @@ function buildListItem(overrides = {}) {
     notes: faker.datatype.boolean() ? '' : faker.lorem.paragraph(),
     finishDate,
     startDate,
-    book: buildBook({id: bookId}),
+    book: buildBook({ id: bookId }),
     ...overrides,
   }
 }
 
-export {buildUser, buildListItem, buildBook}
+export { buildUser, buildListItem, buildBook }

@@ -5,7 +5,7 @@ import ErrorMessage from '@/components/ErrorMessage'
 import FullPageErrorFallback from '@/components/FullPageErrorFallback'
 import * as mq from '@/styles/media-queries'
 import * as colors from '@/styles/colors'
-// import {useAuth} from './context/auth-context'
+import { useAuth } from '@/context/auth'
 // import {ReadingListScreen} from './screens/reading-list'
 // import {FinishedScreen} from './screens/finished'
 import Discover from '@/screens/Discover'
@@ -28,7 +28,7 @@ function ErrorFallback({ error }: any) {
 }
 
 function AuthenticatedApp() {
-  // const {user, logout} = useAuth()
+  const { user, logout } = useAuth()
   return (
     <ErrorBoundary FallbackComponent={FullPageErrorFallback}>
       <div

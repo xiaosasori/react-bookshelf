@@ -1,7 +1,8 @@
 import React from 'react'
 import { useQueryClient } from 'react-query'
 import * as auth from '@/auth-provider'
-// import {client} from 'utils/api-client'
+import { default as api, getBootstrap, setToken } from '@/api'
+
 import { useAsync } from '@/hooks'
 // import {setQueryDataForBook} from 'utils/books'
 import FullPageSpinner from '@/components/FullPageSpinner'
@@ -13,11 +14,12 @@ AuthContext.displayName = 'AuthContext'
 function AuthProvider(props: any) {
   const queryClient = useQueryClient()
   async function bootstrapAppData() {
-    const user: any = null
+    let user: any = null
     const token = await auth.getToken()
     if (token) {
-      const data = await client('bootstrap', { token })
-      queryClient.setQueryData('list-items', data.listItems)
+      setToken(token)
+      const data = await getBootstrap()
+      // queryClient.setQueryData('list-items', data.listItems)
       // for (const listItem of data.listItems) {
       //   setQueryDataForBook(listItem.book)
       // }
@@ -85,10 +87,7 @@ function useAuth() {
 function useClient() {
   const { user } = useAuth()
   const token = user?.token
-  return React.useCallback(
-    (endpoint, config) => client(endpoint, { ...config, token }),
-    [token],
-  )
+  if (token) setToken(token)
 }
 
 export { AuthProvider, useAuth, useClient }

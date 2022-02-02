@@ -1,6 +1,6 @@
-import {setupWorker} from 'msw'
-import {handlers} from './server-handlers'
-import {homepage} from '../../../package.json'
+import { setupWorker } from 'msw'
+import { homepage } from '../../../package.json'
+import { handlers } from './server-handlers'
 
 const fullUrl = new URL(homepage)
 
@@ -14,4 +14,4 @@ const server = setupWorker(...handlers)
 // })
 
 export * from 'msw'
-export {server}
+export { server }

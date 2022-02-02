@@ -1,5 +1,5 @@
-import {rest} from 'msw'
-import {match} from 'node-match-path'
+import { rest } from 'msw'
+import { match } from 'node-match-path'
 import * as booksDB from '@/test/data/books'
 import * as usersDB from '@/test/data/users'
 import * as listItemsDB from '@/test/data/list-items'
@@ -7,57 +7,62 @@ import * as listItemsDB from '@/test/data/list-items'
 let sleep
 if (import.meta.env.CI) {
   sleep = () => Promise.resolve()
-} else if (import.meta.env.NODE_ENV === 'test') {
+}
+else if (import.meta.env.NODE_ENV === 'test') {
   sleep = () => Promise.resolve()
-} else {
+}
+else {
   sleep = (
-    t = Math.random() * ls('__bookshelf_variable_request_time__', 400) +
-      ls('__bookshelf_min_request_time__', 400),
+    t = Math.random() * ls('__bookshelf_variable_request_time__', 400)
+      + ls('__bookshelf_min_request_time__', 400),
   ) => new Promise(resolve => setTimeout(resolve, t))
 }
 
 function ls(key, defaultVal) {
   const lsVal = window.localStorage.getItem(key)
   let val
-  if (lsVal) {
+  if (lsVal)
     val = Number(lsVal)
-  }
+
   return Number.isFinite(val) ? val : defaultVal
 }
 
 const apiUrl = import.meta.env.VITE_REACT_APP_API_URL
 const authUrl = import.meta.env.VITE_REACT_APP_AUTH_URL
 
+const getToken = req => req.headers.get('Authorization')?.replace('Bearer ', '')
+
 const handlers = [
-  rest.post(`${authUrl}/login`, async (req, res, ctx) => {
-    const {username, password} = req.body
-    const user = await usersDB.authenticate({username, password})
-    return res(ctx.json({user}))
+  rest.post(`${authUrl}/login`, async(req, res, ctx) => {
+    const { username, password } = req.body
+    const user = await usersDB.authenticate({ username, password })
+    return res(ctx.json({ user }))
   }),
 
-  rest.post(`${authUrl}/register`, async (req, res, ctx) => {
-    const {username, password} = req.body
-    const userFields = {username, password}
+  rest.post(`${authUrl}/register`, async(req, res, ctx) => {
+    const { username, password } = req.body
+    const userFields = { username, password }
     await usersDB.create(userFields)
     let user
     try {
       user = await usersDB.authenticate(userFields)
-    } catch (error) {
+    }
+    catch (error) {
       return res(
         ctx.status(400),
-        ctx.json({status: 400, message: error.message}),
+        ctx.json({ status: 400, message: error.message }),
       )
     }
-    return res(ctx.json({user}))
+    return res(ctx.json({ user }))
   }),
 
-  rest.get(`${apiUrl}/me`, async (req, res, ctx) => {
+  rest.get(`${apiUrl}/me`, async(req, res, ctx) => {
     const user = await getUser(req)
     const token = getToken(req)
-    return res(ctx.json({user: {...user, token}}))
+    return res(ctx.json({ user: { ...user, token } }))
   }),
 
-  rest.get(`${apiUrl}/bootstrap`, async (req, res, ctx) => {
+  rest.get(`${apiUrl}/bootstrap`, async(req, res, ctx) => {
     const user = await getUser(req)
     const token = getToken(req)
     const lis = await listItemsDB.readByOwner(user.id)
@@ -67,46 +72,48 @@ const handlers = [
         book: await booksDB.read(listItem.bookId),
       })),
     )
-    return res(ctx.json({user: {...user, token}, listItems: listItemsAndBooks}))
+    return res(ctx.json({ user: { ...user, token }, listItems: listItemsAndBooks }))
   }),
 
-  rest.get(`${apiUrl}/books`, async (req, res, ctx) => {
-    if (!req.url.searchParams.has('query')) {
+  rest.get(`${apiUrl}/books`, async(req, res, ctx) => {
+    if (!req.url.searchParams.has('query'))
       return ctx.fetch(req)
-    }
+
     const query = req.url.searchParams.get('query')
 
     let matchingBooks = []
     if (query) {
       matchingBooks = await booksDB.query(query)
-    } else {
+    }
+    else {
       if (getToken(req)) {
         const user = await getUser(req)
         const allBooks = await getBooksNotInUsersList(user.id)
         // return a random assortment of 10 books not already in the user's list
         matchingBooks = allBooks.slice(0, 10)
-      } else {
+      }
+      else {
         const allBooks = await booksDB.readManyNotInList([])
         matchingBooks = allBooks.slice(0, 10)
       }
     }
 
-    return res(ctx.json({books: matchingBooks}))
+    return res(ctx.json({ books: matchingBooks }))
   }),
 
-  rest.get(`${apiUrl}/books/:bookId`, async (req, res, ctx) => {
-    const {bookId} = req.params
+  rest.get(`${apiUrl}/books/:bookId`, async(req, res, ctx) => {
+    const { bookId } = req.params
     const book = await booksDB.read(bookId)
     if (!book) {
       return res(
         ctx.status(404),
-        ctx.json({status: 404, message: 'Book not found'}),
+        ctx.json({ status: 404, message: 'Book not found' }),
       )
     }
-    return res(ctx.json({book}))
+    return res(ctx.json({ book }))
   }),
 
-  rest.get(`${apiUrl}/list-items`, async (req, res, ctx) => {
+  rest.get(`${apiUrl}/list-items`, async(req, res, ctx) => {
     const user = await getUser(req)
     const lis = await listItemsDB.readByOwner(user.id)
     const listItemsAndBooks = await Promise.all(
@@ -115,58 +122,60 @@ const handlers = [
         book: await booksDB.read(listItem.bookId),
       })),
     )
-    return res(ctx.json({listItems: listItemsAndBooks}))
+    return res(ctx.json({ listItems: listItemsAndBooks }))
   }),
 
-  rest.post(`${apiUrl}/list-items`, async (req, res, ctx) => {
+  rest.post(`${apiUrl}/list-items`, async(req, res, ctx) => {
     const user = await getUser(req)
-    const {bookId} = req.body
+    const { bookId } = req.body
     const listItem = await listItemsDB.create({
       ownerId: user.id,
-      bookId: bookId,
+      bookId,
     })
     const book = await booksDB.read(bookId)
-    return res(ctx.json({listItem: {...listItem, book}}))
+    return res(ctx.json({ listItem: { ...listItem, book } }))
   }),
 
-  rest.put(`${apiUrl}/list-items/:listItemId`, async (req, res, ctx) => {
+  rest.put(`${apiUrl}/list-items/:listItemId`, async(req, res, ctx) => {
     const user = await getUser(req)
-    const {listItemId} = req.params
+    const { listItemId } = req.params
     const updates = req.body
     await listItemsDB.authorize(user.id, listItemId)
     const updatedListItem = await listItemsDB.update(listItemId, updates)
     const book = await booksDB.read(updatedListItem.bookId)
-    return res(ctx.json({listItem: {...updatedListItem, book}}))
+    return res(ctx.json({ listItem: { ...updatedListItem, book } }))
   }),
 
-  rest.delete(`${apiUrl}/list-items/:listItemId`, async (req, res, ctx) => {
+  rest.delete(`${apiUrl}/list-items/:listItemId`, async(req, res, ctx) => {
     const user = await getUser(req)
-    const {listItemId} = req.params
+    const { listItemId } = req.params
     await listItemsDB.authorize(user.id, listItemId)
     await listItemsDB.remove(listItemId)
-    return res(ctx.json({success: true}))
+    return res(ctx.json({ success: true }))
   }),
 
-  rest.post(`${apiUrl}/profile`, async (req, res, ctx) => {
+  rest.post(`${apiUrl}/profile`, async(req, res, ctx) => {
     // here's where we'd actually send the report to some real data store.
-    return res(ctx.json({success: true}))
+    return res(ctx.json({ success: true }))
   }),
-].map(handler => {
+].map((handler) => {
   const originalResolver = handler.resolver
   handler.resolver = async function resolver(req, res, ctx) {
     try {
-      if (shouldFail(req)) {
+      if (shouldFail(req))
         throw new Error('Request failure (for testing purposes).')
-      }
+
       const result = await originalResolver(req, res, ctx)
       return result
-    } catch (error) {
+    }
+    catch (error) {
       const status = error.status || 500
       return res(
         ctx.status(status),
-        ctx.json({status, message: error.message || 'Unknown Error'}),
+        ctx.json({ status, message: error.message || 'Unknown Error' }),
       )
-    } finally {
+    }
+    finally {
       await sleep()
     }
   }
@@ -187,10 +196,10 @@ function shouldFail(req) {
 }
 
 function requestMatchesFailConfig(req) {
-  function configMatches({requestMethod, urlMatch}) {
+  function configMatches({ requestMethod, urlMatch }) {
     return (
-      (requestMethod === 'ALL' || req.method === requestMethod) &&
-      match(urlMatch, req.url.pathname).matches
+      (requestMethod === 'ALL' || req.method === requestMethod)
+      && match(urlMatch, req.url.pathname).matches
     )
   }
   try {
@@ -198,13 +207,12 @@ function requestMatchesFailConfig(req) {
       window.localStorage.getItem('__bookshelf_request_fail_config__') || '[]',
     )
     if (failConfig.some(configMatches)) return true
-  } catch (error) {
+  }
+  catch (error) {
     window.localStorage.removeItem('__bookshelf_request_fail_config__')
   }
   return false
 }
-
-const getToken = req => req.headers.get('Authorization')?.replace('Bearer ', '')
 
 async function getUser(req) {
   const token = getToken(req)
@@ -216,7 +224,8 @@ async function getUser(req) {
   let userId
   try {
     userId = atob(token)
-  } catch (e) {
+  }
+  catch (e) {
     const error = new Error('Invalid token. Please login again.')
     error.status = 401
     throw error
@@ -233,4 +242,4 @@ async function getBooksNotInUsersList(userId) {
   return books
 }
 
-export {handlers}
+export { handlers }
