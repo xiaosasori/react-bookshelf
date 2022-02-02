@@ -67,7 +67,7 @@ function AuthProvider(props: any) {
     auth.logout()
     queryClient.clear()
     setData(null)
-  }, [setData])
+  }, [queryClient, setData])
 
   const value = React.useMemo(
     () => ({ user, login, logout, register }),

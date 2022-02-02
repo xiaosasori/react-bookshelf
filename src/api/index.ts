@@ -1,4 +1,6 @@
 import axios from 'axios'
+import { useQueryClient } from 'react-query'
+import * as auth from '@/auth-provider'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_REACT_APP_API_URL as string,
@@ -17,7 +19,15 @@ api.interceptors.request.use(
 )
 
 api.interceptors.response.use(
-  (response) => {
+  async(response) => {
+    if (response.status === 401) {
+      const queryClient = useQueryClient()
+      queryClient.clear()
+      await auth.logout()
+      // refresh the page for them
+      window.location.reload()
+      return Promise.reject(new Error('Please re-authenticate.'))
+    }
     if (response?.data)
       return response.data
 
@@ -38,6 +48,10 @@ export function getBooks(query: string) {
       query: encodeURIComponent(query),
     },
   })
+}
+
+export function getBook(id: string) {
+  return api.get(`books/${id}`)
 }
 
 export function getBootstrap() {

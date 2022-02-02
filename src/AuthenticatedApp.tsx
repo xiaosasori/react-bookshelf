@@ -5,9 +5,9 @@ import FullPageErrorFallback from '@/components/FullPageErrorFallback'
 import { useAuth } from '@/context/auth'
 import Discover from '@/screens/Discover'
 import NotFound from '@/screens/NotFound'
-// import {ReadingListScreen} from './screens/reading-list'
-// import {FinishedScreen} from './screens/finished'
-// import {BookScreen} from './screens/book'
+import ReadingList from '@/screens/ReadingList'
+import Finished from '@/screens/Finished'
+import Book from '@/screens/Book'
 import Layout from '@/layouts/default'
 
 function AuthenticatedApp() {
@@ -32,7 +32,10 @@ function AuthenticatedApp() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<div>zxc</div>} />
+            <Route path="/list" element={<ReadingList />} />
+            <Route path="/finished" element={<Finished />} />
             <Route path="/discover" element={<Discover />} />
+            <Route path="/book/:bookId" element={<Book />} />
             <Route path="*" element={<NotFound/>} />
           </Route>
         </Routes>
