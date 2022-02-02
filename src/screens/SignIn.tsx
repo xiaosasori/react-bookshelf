@@ -2,17 +2,11 @@ import Logo from '@/components/Logo'
 import Button from '@/components/base/Button'
 import { Modal, ModalContents, ModalOpenButton } from '@/components/Modal'
 import LoginForm from '@/components/LoginForm'
+import { useAuth } from '@/context/auth'
 
 function SignIn() {
-  // const {login, register} = useAuth()
-  function login(values: any) {
-    console.log('login', values)
-    return new Promise(resolve => setTimeout(resolve, 200))
-  }
-  function register() {
-    console.log('register')
-    return new Promise(resolve => setTimeout(resolve, 200))
-  }
+  const { login, register } = useAuth()
+
   return (
     <div
       css={{

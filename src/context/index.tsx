@@ -1,4 +1,3 @@
-import { BrowserRouter as Router } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { AuthProvider } from './auth'
 
@@ -19,9 +18,7 @@ const queryClient = new QueryClient({
 function AppProviders({ children }: any) {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router>
-        <AuthProvider>{children}</AuthProvider>
-      </Router>
+      <AuthProvider>{children}</AuthProvider>
     </QueryClientProvider>
   )
 }

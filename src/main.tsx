@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom'
 import App from './App'
 // @ts-ignore
 import { server } from './test/server/dev-server.js'
+import { AppProviders } from './context'
 
 async function prepare() {
   // if (import.meta.env.DEV) {
@@ -14,7 +15,9 @@ async function prepare() {
 prepare().then(() => {
   ReactDOM.render(
     <React.StrictMode>
-      <App />
+      <AppProviders>
+        <App />
+      </AppProviders>
     </React.StrictMode>,
     document.getElementById('root'),
   )

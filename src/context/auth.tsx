@@ -1,24 +1,34 @@
 import React from 'react'
 import { useQueryClient } from 'react-query'
 import * as auth from '@/auth-provider'
-import { default as api, getBootstrap, setToken } from '@/api'
+import { getBootstrap, setToken } from '@/api'
 
 import { useAsync } from '@/hooks'
 // import {setQueryDataForBook} from 'utils/books'
 import FullPageSpinner from '@/components/FullPageSpinner'
 import FullPageErrorFallback from '@/components/FullPageErrorFallback'
+import type { User } from '@/types'
 
-const AuthContext = React.createContext()
+interface AuthContextType {
+  user: User
+  login: () => void
+  logout: () => void
+  register: () => void
+}
+// non-null assertion here means during runtime
+// the parameter will now be null or undefined
+const AuthContext = React.createContext<AuthContextType>(undefined!)
 AuthContext.displayName = 'AuthContext'
 
 function AuthProvider(props: any) {
   const queryClient = useQueryClient()
+
   async function bootstrapAppData() {
     let user: any = null
     const token = await auth.getToken()
     if (token) {
       setToken(token)
-      const data = await getBootstrap()
+      const data = await getBootstrap() as any
       // queryClient.setQueryData('list-items', data.listItems)
       // for (const listItem of data.listItems) {
       //   setQueryDataForBook(listItem.book)
@@ -54,7 +64,7 @@ function AuthProvider(props: any) {
     [setData],
   )
   const logout = React.useCallback(() => {
-    // auth.logout()
+    auth.logout()
     queryClient.clear()
     setData(null)
   }, [setData])

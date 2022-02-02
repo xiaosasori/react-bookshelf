@@ -1,20 +1,15 @@
-// import FullPageSpinner from '@/components/FullPageSpinner'
-import { Route, BrowserRouter as Router, Link as RouterLink, Routes, useMatch } from 'react-router-dom'
-import Discover from '@/screens/Discover'
+import React from 'react'
+import { useAuth } from './context/auth'
+import AuthenticatedApp from './AuthenticatedApp'
+import FullPageSpinner from '@/components/FullPageSpinner'
 import SignIn from '@/screens/SignIn'
 
 function App() {
+  const { user } = useAuth()
   return (
-    <Router>
-      <div className="App">
-        <Routes>
-          <Route path="/" element={<SignIn />} />
-          <Route path="/discover" element={<Discover />} />
-        </Routes>
-        {/* <FullPageSpinner /> */}
-        {/* <SignIn /> */}
-      </div>
-    </Router>
+    <React.Suspense fallback={<FullPageSpinner />}>
+      {user ? <AuthenticatedApp /> : <SignIn />}
+    </React.Suspense>
   )
 }
 
