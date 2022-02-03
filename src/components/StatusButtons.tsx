@@ -7,19 +7,11 @@ import {
   FaTimesCircle,
 } from 'react-icons/fa'
 import Tooltip from '@reach/tooltip'
-// import {
-//   useListItem,
-//   useUpdateListItem,
-//   useRemoveListItem,
-//   useCreateListItem,
-// } from 'utils/list-items'
 import styled from '@emotion/styled'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
 import * as colors from '@/styles/colors'
 import { useAsync } from '@/hooks'
 import Spinner from '@/components/base/Spinner'
-import { addListItems, getListItems, removeListItems, updateListItems } from '@/api'
-import type { ListItem } from '@/types'
+import { useCreateListItem, useListItem, useRemoveListItem, useUpdateListItem } from '@/stores/list-items'
 
 const CircleButton = styled.button({
   borderRadius: '30px',
@@ -68,29 +60,18 @@ function TooltipButton({ label, highlight, onClick, icon, ...rest }: any) {
 }
 
 function StatusButtons({ book }: any) {
-  const { data: listItems } = useQuery('list-items', () => getListItems().then((data: any) => data.listItems))
-  const listItem = listItems?.find((li: ListItem) => li.bookId === book.id) ?? null
-  const queryCache = useQueryClient()
+  const listItem = useListItem(book.id)
 
   // 💰 for all the mutations below, if you want to get the list-items cache
   // updated after this query finishes the use the `onSettled` config option
   // to queryCache.invalidateQueries('list-items')
   // otherwise we go to other book and click "add to list", the StatusButtons won't update
 
-  const { mutateAsync: create } = useMutation(
-    ({ bookId }: any) => addListItems(bookId),
-    { onSettled: () => queryCache.invalidateQueries('list-items') },
-  )
+  const { mutateAsync: create } = useCreateListItem()
 
-  const { mutateAsync: remove } = useMutation(
-    (bookId: string) => removeListItems(bookId),
-    { onSettled: () => queryCache.invalidateQueries('list-items') },
-  )
+  const { mutateAsync: remove } = useRemoveListItem()
 
-  const { mutateAsync: update } = useMutation(
-    (updates: any) => updateListItems(updates.id, updates),
-    { onSettled: () => queryCache.invalidateQueries('list-items') },
-  )
+  const { mutateAsync: update } = useUpdateListItem()
 
   return (
     <React.Fragment>

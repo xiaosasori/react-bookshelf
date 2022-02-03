@@ -1,18 +1,13 @@
 import { Link } from 'react-router-dom'
-// import {useListItem} from 'utils/list-items'
-import { useQuery } from 'react-query'
 import StatusButtons from './StatusButtons'
 import Rating from './Rating'
 import * as mq from '@/styles/media-queries'
 import * as colors from '@/styles/colors'
-import { getListItems } from '@/api'
-import type { ListItem } from '@/types'
+import { useListItem } from '@/stores/list-items'
 
 function BookRow({ book }: any) {
   const { title, author, coverImageUrl } = book
-  const { data: listItems } = useQuery('list-items', () => getListItems().then((data: any) => data.listItems))
-  const listItem = listItems?.find((li: ListItem) => li.bookId === book.id) ?? null
-  // const listItem = useListItem(book.id)
+  const listItem = useListItem(book.id)
 
   const id = `book-row-book-${book.id}`
 

@@ -1,8 +1,7 @@
 import * as React from 'react'
 import { FaStar } from 'react-icons/fa'
-import { useMutation, useQueryClient } from 'react-query'
 import * as colors from '@/styles/colors'
-import { updateListItems } from '@/api'
+import { useUpdateListItem } from '@/stores/list-items'
 
 const visuallyHiddenCSS = {
   border: '0',
@@ -19,11 +18,7 @@ function Rating({ listItem }: any) {
   const [isTabbing, setIsTabbing] = React.useState(false)
   // 💰 if you want to get the list-items cache updated after this query finishes
   // the use the `onSettled` config option to queryCache.invalidateQueries('list-items')
-  const queryCache = useQueryClient()
-  const { mutateAsync: update } = useMutation(
-    (updates: any) => updateListItems(updates.id, updates),
-    { onSettled: () => queryCache.invalidateQueries('list-items') },
-  )
+  const { mutateAsync: update } = useUpdateListItem()
 
   React.useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {

@@ -1,5 +1,4 @@
 import { useParams } from 'react-router-dom'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
 import type { ChangeEvent } from 'react'
 import React from 'react'
 import debounceFn from 'debounce-fn'
@@ -7,31 +6,17 @@ import Tooltip from '@reach/tooltip'
 import { FaRegCalendarAlt } from 'react-icons/fa'
 import * as mq from '@/styles/media-queries'
 import * as colors from '@/styles/colors'
-import { getBook, getListItems, updateListItems } from '@/api'
-import bookPlaceholderSvg from '@/assets/book-placeholder.svg'
 import StatusButtons from '@/components/StatusButtons'
-import type { ListItem } from '@/types'
 import Rating from '@/components/Rating'
 import { formatDate } from '@/helpers'
-
-const loadingBook = {
-  title: 'Loading...',
-  author: 'loading...',
-  coverImageUrl: bookPlaceholderSvg,
-  publisher: 'Loading Publishing',
-  synopsis: 'Loading...',
-  loadingBook: true,
-}
+import { useBook } from '@/stores'
+import { useListItem, useUpdateListItem } from '@/stores/list-items'
 
 function Book() {
   const { bookId } = useParams()
-  const { data: book } = useQuery(['book', bookId!],
-    () => getBook(bookId!).then((data: any) => data.book),
-    { initialData: loadingBook },
-  )
+  const book = useBook(bookId!)
 
-  const { data: listItems } = useQuery('list-items', () => getListItems().then((data: any) => data.listItems))
-  const listItem = listItems?.find((li: ListItem) => li.bookId === book.id) ?? null
+  const listItem = useListItem(bookId!)
 
   const { title, author, coverImageUrl, publisher, synopsis } = book
 
@@ -115,11 +100,7 @@ function ListItemTimeframe({ listItem }: any) {
 }
 
 function NotesTextarea({ listItem }: any) {
-  const queryCache = useQueryClient()
-  const { mutateAsync: mutate } = useMutation(
-    (updates: any) => updateListItems(updates.id, updates),
-    { onSettled: () => queryCache.invalidateQueries('list-items') },
-  )
+  const { mutateAsync: mutate } = useUpdateListItem()
 
   const debouncedMutate = React.useMemo(() => debounceFn(mutate, { wait: 300 }), [
     mutate,

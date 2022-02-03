@@ -1,10 +1,8 @@
-import { useQuery } from 'react-query'
 import BookRow from './BookRow'
-import { getListItems } from '@/api'
+import { useListItems } from '@/stores/list-items'
 
 function ListItemList({ filterListItems, noListItems, noFilteredListItems }: any) {
-  // const listItems = useListItems()
-  const { data: listItems } = useQuery('list-items', () => getListItems().then((data: any) => data.listItems))
+  const listItems = useListItems()
 
   const filteredListItems = listItems?.filter(filterListItems)
 
