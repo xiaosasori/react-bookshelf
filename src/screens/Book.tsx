@@ -5,6 +5,7 @@ import * as colors from '@/styles/colors'
 import { useAsync } from '@/hooks'
 import { getBook } from '@/api'
 import bookPlaceholderSvg from '@/assets/book-placeholder.svg'
+import StatusButtons from '@/components/StatusButtons'
 
 const loadingBook = {
   title: 'Loading...',
@@ -23,7 +24,8 @@ function Book() {
     run(getBook(bookId!))
   }, [run, bookId])
 
-  const { title, author, coverImageUrl, publisher, synopsis } = data?.book ?? loadingBook
+  const book = data?.book ?? loadingBook
+  const { title, author, coverImageUrl, publisher, synopsis } = book
 
   return (
     <div>
@@ -64,7 +66,7 @@ function Book() {
                 minHeight: 100,
               }}
             >
-              {/* {book.loadingBook ? null : <StatusButtons book={book} />} */}
+              {book.loadingBook ? null : <StatusButtons book={book} />}
             </div>
           </div>
           <div css={{ marginTop: 10, minHeight: 46 }}>

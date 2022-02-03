@@ -58,4 +58,13 @@ export function getBootstrap() {
   return api.get('bootstrap')
 }
 
+export function addListItems(bookId: string) {
+  return api.post('list-items', { bookId })
+}
+
+export function getListItems() {
+  return api.get('list-items')
+  // return api.get('list-items').then((data: any) => data.listItems)
+}
+
 export default api
