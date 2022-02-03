@@ -1,7 +1,7 @@
 export interface ListItem {
   id: string
   bookId: string
-  finishedDate?: string
+  finishDate?: number
   notes: string
   ownerId: string
   rating: number

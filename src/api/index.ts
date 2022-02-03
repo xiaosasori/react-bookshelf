@@ -64,7 +64,14 @@ export function addListItems(bookId: string) {
 
 export function getListItems() {
   return api.get('list-items')
-  // return api.get('list-items').then((data: any) => data.listItems)
+}
+
+export function removeListItems(listId: string) {
+  return api.delete(`list-items/${listId}`)
+}
+
+export function updateListItems(bookId: string, payload: any) {
+  return api.put(`list-items/${bookId}`, payload)
 }
 
 export default api

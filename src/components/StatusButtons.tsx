@@ -18,7 +18,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 import * as colors from '@/styles/colors'
 import { useAsync } from '@/hooks'
 import Spinner from '@/components/base/Spinner'
-import { addListItems, getListItems } from '@/api'
+import { addListItems, getListItems, removeListItems, updateListItems } from '@/api'
 import type { ListItem } from '@/types'
 
 const CircleButton = styled.button({
@@ -82,17 +82,15 @@ function StatusButtons({ book }: any) {
     { onSettled: () => queryCache.invalidateQueries('list-items') },
   )
 
-  // 🐨 call useMutation here and assign the mutate function to "update"
-  // the mutate function should call the list-items/:listItemId endpoint with a PUT
-  //   and the updates as data. The mutate function will be called with the updates
-  //   you can pass as data.
+  const { mutateAsync: remove } = useMutation(
+    (bookId: string) => removeListItems(bookId),
+    { onSettled: () => queryCache.invalidateQueries('list-items') },
+  )
 
-  // 🐨 call useMutation here and assign the mutate function to "remove"
-  // the mutate function should call the list-items/:listItemId endpoint with a DELETE
-
-  // 🐨 call useMutation here and assign the mutate function to "create"
-  // the mutate function should call the list-items endpoint with a POST
-  // and the bookId the listItem is being created for.
+  const { mutateAsync: update } = useMutation(
+    (updates: any) => updateListItems(updates.id, updates),
+    { onSettled: () => queryCache.invalidateQueries('list-items') },
+  )
 
   return (
     <React.Fragment>
@@ -103,19 +101,19 @@ function StatusButtons({ book }: any) {
               <TooltipButton
                 label="Unmark as read"
                 highlight={colors.yellow}
-                // 🐨 add an onClick here that calls update with the data we want to update
                 // 💰 to mark a list item as unread, set the finishDate to null
-                // {id: listItem.id, finishDate: null}
-                icon={<FaBook />} onClick={undefined} />
+                onClick={() => update({ id: listItem.id, finishDate: null })}
+                icon={<FaBook />}
+              />
             )
             : (
               <TooltipButton
                 label="Mark as read"
                 highlight={colors.green}
-                // 🐨 add an onClick here that calls update with the data we want to update
                 // 💰 to mark a list item as read, set the finishDate
-                // {id: listItem.id, finishDate: Date.now()}
-                icon={<FaCheckCircle />} onClick={undefined} />
+                onClick={() => update({ id: listItem.id, finishDate: Date.now() })}
+                icon={<FaCheckCircle />}
+              />
             )
         )
         : null}
@@ -124,7 +122,7 @@ function StatusButtons({ book }: any) {
           <TooltipButton
             label="Remove from list"
             highlight={colors.danger}
-            // 🐨 add an onClick here that calls remove
+            onClick={() => remove(listItem.id)}
             icon={<FaMinusCircle />}
           />
         )
