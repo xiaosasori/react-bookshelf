@@ -1,4 +1,4 @@
-function loadDevTools(callback) {
+function loadDevTools(callback: () => any) {
   // check URL first
   const url = new URL(window.location)
   const setInUrl = url.searchParams.has('dev-tools')

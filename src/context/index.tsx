@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from 'react-query'
+import { ReactQueryDevtools } from 'react-query/devtools'
 import { AuthProvider } from './auth'
 
 const queryClient = new QueryClient({
@@ -19,6 +20,7 @@ function AppProviders({ children }: any) {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>{children}</AuthProvider>
+      <ReactQueryDevtools />
     </QueryClientProvider>
   )
 }

@@ -1,4 +1,3 @@
-/** @jsx jsx */
 import { Global, jsx } from '@emotion/react'
 
 import '@reach/tabs/styles.css'
@@ -9,25 +8,25 @@ import ReactDOM from 'react-dom'
 import { FaTools } from 'react-icons/fa'
 import { Tooltip } from '@reach/tooltip'
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@reach/tabs'
-import * as reactQuery from 'react-query'
+// import * as reactQuery from 'react-query'
 // pulling the development thing directly because I'm not worried about
 // bundle size since this won't be loaded in prod unless the query string/localStorage key is set
-import { ReactQueryDevtoolsPanel } from 'react-query/devtools'
+// import { ReactQueryDevtoolsPanel } from 'react-query/devtools/development'
 
 import * as colors from '@/styles/colors'
 
 function install() {
   // add some things to window to make it easier to debug
-  window.reactQuery = reactQuery
+  // window.reactQuery = reactQuery
 
-  const requireDevToolsLocal = require.context(
-    './',
-    false,
-    /dev-tools\.local\.js/,
-  )
-  const local = requireDevToolsLocal.keys()[0]
-  if (local)
-    requireDevToolsLocal(local).default
+  // const requireDevToolsLocal = require.context(
+  //   './',
+  //   false,
+  //   /dev-tools\.local\.js/,
+  // )
+  // const local = requireDevToolsLocal.keys()[0]
+  // if (local)
+  //   requireDevToolsLocal(local).default
 
   function DevTools() {
     const rootRef = React.useRef()
@@ -182,9 +181,9 @@ function install() {
                   <TabPanel>
                     <RequestFailUI />
                   </TabPanel>
-                  <TabPanel>
+                  {/* <TabPanel>
                     <ReactQueryDevtoolsPanel />
-                  </TabPanel>
+                  </TabPanel> */}
                 </TabPanels>
               </Tabs>
             )

@@ -1,6 +1,7 @@
 import './bootstrap'
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { loadDevTools } from './dev-tools/load'
 import App from './App'
 // @ts-ignore
 import { server } from './test/server/dev-server.js'
@@ -12,13 +13,16 @@ async function prepare() {
   // }
   return server.start()
 }
+
 prepare().then(() => {
-  ReactDOM.render(
-    <React.StrictMode>
-      <AppProviders>
-        <App />
-      </AppProviders>
-    </React.StrictMode>,
-    document.getElementById('root'),
-  )
+  loadDevTools(() => {
+    ReactDOM.render(
+      <React.StrictMode>
+        <AppProviders>
+          <App />
+        </AppProviders>
+      </React.StrictMode>,
+      document.getElementById('root'),
+    )
+  })
 })
