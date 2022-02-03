@@ -68,9 +68,9 @@ function TooltipButton({ label, highlight, onClick, icon, ...rest }: any) {
 }
 
 function StatusButtons({ book }: any) {
-  const { data: listItems } = useQuery('list-items', () => getListItems().then(data => data.listItems))
-  const queryCache = useQueryClient()
+  const { data: listItems } = useQuery('list-items', () => getListItems().then((data: any) => data.listItems))
   const listItem = listItems?.find((li: ListItem) => li.bookId === book.id) ?? null
+  const queryCache = useQueryClient()
 
   // 💰 for all the mutations below, if you want to get the list-items cache
   // updated after this query finishes the use the `onSettled` config option

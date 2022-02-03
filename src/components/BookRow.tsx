@@ -1,12 +1,17 @@
 import { Link } from 'react-router-dom'
 // import {useListItem} from 'utils/list-items'
+import { useQuery } from 'react-query'
 import StatusButtons from './StatusButtons'
+import Rating from './Rating'
 import * as mq from '@/styles/media-queries'
 import * as colors from '@/styles/colors'
-// import {Rating} from './rating'
+import { getListItems } from '@/api'
+import type { ListItem } from '@/types'
 
 function BookRow({ book }: any) {
   const { title, author, coverImageUrl } = book
+  const { data: listItems } = useQuery('list-items', () => getListItems().then((data: any) => data.listItems))
+  const listItem = listItems?.find((li: ListItem) => li.bookId === book.id) ?? null
   // const listItem = useListItem(book.id)
 
   const id = `book-row-book-${book.id}`
@@ -67,7 +72,7 @@ function BookRow({ book }: any) {
               >
                 {title}
               </h2>
-              {/* {listItem?.finishDate ? <Rating listItem={listItem} /> : null} */}
+              {listItem?.finishDate ? <Rating listItem={listItem} /> : null}
             </div>
             <div css={{ marginLeft: 10 }}>
               <div
