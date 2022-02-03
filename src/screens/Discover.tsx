@@ -2,28 +2,26 @@ import Tooltip from '@reach/tooltip'
 import { FaSearch, FaTimes } from 'react-icons/fa'
 import type { FormEvent } from 'react'
 import React from 'react'
+import { useQuery } from 'react-query'
 import Input from '@/components/base/Input'
 import Spinner from '@/components/base/Spinner'
 import * as colors from '@/styles/colors'
 import BookRow from '@/components/BookRow'
 import { getBooks } from '@/api'
-import { useAsync } from '@/hooks'
 import type { Book } from '@/types'
 
 function Discover() {
   const [query, setQuery] = React.useState('')
   const [queried, setQueried] = React.useState<boolean>()
-  const { data, error, run, isLoading, isError, isSuccess } = useAsync()
+  const { data, error, isLoading, isError, isSuccess } = useQuery(
+    ['bookSearch', { query }],
+    () => getBooks(query).then((data: any) => data.books),
+  )
   // const {books, error, isLoading, isError, isSuccess} = useBookSearch(query)
   // const refetchBookSearchQuery = useRefetchBookSearchQuery()
   // React.useEffect(() => {
   //   return () => refetchBookSearchQuery()
   // }, [refetchBookSearchQuery])
-
-  React.useEffect(() => {
-    if (!queried) return
-    run(getBooks(query))
-  }, [queried, query, run])
 
   function handleSearchClick(event: FormEvent) {
     event.preventDefault()
@@ -90,11 +88,11 @@ function Discover() {
                     <Spinner />
                   </div>
                 )
-                : isSuccess && data.books.length
+                : isSuccess && data.length
                   ? (
                     <p>Here you go! Find more books with the search bar above.</p>
                   )
-                  : isSuccess && !data.books.length
+                  : isSuccess && !data.length
                     ? (
                       <p>
                 Hmmm... I couldn&apos;t find any books to suggest for you. Sorry.
@@ -103,14 +101,14 @@ function Discover() {
                     : null}
             </div>
           )}
-        {data?.books.length
+        {data?.length
           ? (
             // <Profiler
             //   id="Discover Books Screen Book List"
             //   metadata={{ query, bookCount: data.books.length }}
             // >
             <ul className="mt-5 list-none grid gap-4 grid-rows-[repeat(auto-fill,_minmax(100px,_1fr))]">
-              {data.books.map((book: Book) => (
+              {data.map((book: Book) => (
                 <li key={book.id} aria-label={book.title}>
                   <BookRow key={book.id} book={book} />
                 </li>
