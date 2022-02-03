@@ -1,6 +1,10 @@
 import { useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
+import type { ChangeEvent } from 'react'
 import React from 'react'
+import debounceFn from 'debounce-fn'
+import Tooltip from '@reach/tooltip'
+import { FaRegCalendarAlt } from 'react-icons/fa'
 import * as mq from '@/styles/media-queries'
 import * as colors from '@/styles/colors'
 import { getBook, getListItems, updateListItems } from '@/api'
@@ -8,6 +12,7 @@ import bookPlaceholderSvg from '@/assets/book-placeholder.svg'
 import StatusButtons from '@/components/StatusButtons'
 import type { ListItem } from '@/types'
 import Rating from '@/components/Rating'
+import { formatDate } from '@/helpers'
 
 const loadingBook = {
   title: 'Loading...',
@@ -74,7 +79,7 @@ function Book() {
           </div>
           <div css={{ marginTop: 10, minHeight: 46 }}>
             {listItem?.finishDate ? <Rating listItem={listItem} /> : null}
-            {/* {listItem ? <ListItemTimeframe listItem={listItem} /> : null} */}
+            {listItem ? <ListItemTimeframe listItem={listItem} /> : null}
           </div>
           <br />
           <p css={{ whiteSpace: 'break-spaces', display: 'block' }}>
@@ -82,16 +87,16 @@ function Book() {
           </p>
         </div>
       </div>
-      {/* {!book.loadingBook && listItem
+      {!book.loadingBook && listItem
         ? (
           <NotesTextarea listItem={listItem} />
         )
-        : null} */}
+        : null}
     </div>
   )
 }
 
-function ListItemTimeframe({ listItem }) {
+function ListItemTimeframe({ listItem }: any) {
   const timeframeLabel = listItem.finishDate
     ? 'Start and finish date'
     : 'Start date'
@@ -109,7 +114,7 @@ function ListItemTimeframe({ listItem }) {
   )
 }
 
-function NotesTextarea({ listItem, user }) {
+function NotesTextarea({ listItem }: any) {
   const queryCache = useQueryClient()
   const { mutateAsync: mutate } = useMutation(
     (updates: any) => updateListItems(updates.id, updates),
@@ -120,7 +125,7 @@ function NotesTextarea({ listItem, user }) {
     mutate,
   ])
 
-  function handleNotesChange(e) {
+  function handleNotesChange(e: ChangeEvent<HTMLTextAreaElement>) {
     debouncedMutate({ id: listItem.id, notes: e.target.value })
   }
 
