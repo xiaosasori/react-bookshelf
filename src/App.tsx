@@ -1,8 +1,11 @@
 import React from 'react'
 import { useAuth } from './context/auth'
-import AuthenticatedApp from './AuthenticatedApp'
 import FullPageSpinner from '@/components/FullPageSpinner'
-import SignIn from '@/screens/SignIn'
+
+const AuthenticatedApp = React.lazy(() =>
+  import('./AuthenticatedApp'),
+)
+const SignIn = React.lazy(() => import('@/screens/SignIn'))
 
 function App() {
   const { user } = useAuth()

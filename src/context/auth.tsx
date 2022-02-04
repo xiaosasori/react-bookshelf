@@ -20,23 +20,24 @@ interface AuthContextType {
 const AuthContext = React.createContext<AuthContextType>(undefined!)
 AuthContext.displayName = 'AuthContext'
 
+async function bootstrapAppData() {
+  let user: any = null
+  const token = await auth.getToken()
+  if (token) {
+    setToken(token)
+    const data = await getBootstrap() as any
+    // queryClient.setQueryData('list-items', data.listItems)
+    // for (const listItem of data.listItems) {
+    //   setQueryDataForBook(listItem.book)
+    // }
+    user = data.user
+  }
+  return user
+}
+const appDataPromise = bootstrapAppData()
+
 function AuthProvider(props: any) {
   const queryClient = useQueryClient()
-
-  async function bootstrapAppData() {
-    let user: any = null
-    const token = await auth.getToken()
-    if (token) {
-      setToken(token)
-      const data = await getBootstrap() as any
-      // queryClient.setQueryData('list-items', data.listItems)
-      // for (const listItem of data.listItems) {
-      //   setQueryDataForBook(listItem.book)
-      // }
-      user = data.user
-    }
-    return user
-  }
 
   const {
     data: user,
@@ -51,7 +52,6 @@ function AuthProvider(props: any) {
   } = useAsync()
 
   React.useEffect(() => {
-    const appDataPromise = bootstrapAppData()
     run(appDataPromise)
   }, [run])
 
