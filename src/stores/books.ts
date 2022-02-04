@@ -1,4 +1,5 @@
-import { useQuery } from 'react-query'
+import { useQuery, useQueryClient } from 'react-query'
+import React from 'react'
 import bookPlaceholderSvg from '@/assets/book-placeholder.svg'
 import { getBook, getBooks } from '@/api'
 import type { Book } from '@/types'
@@ -23,10 +24,21 @@ const bookQueryConfig = {
 }
 
 function useBookSearch(query = '') {
+  const queryClient = useQueryClient()
   const result = useQuery<Book[], Error>(
     ['bookSearch', { query }],
     () => getBooks(query).then((data: any) => data.books),
-    bookQueryConfig,
+    {
+      ...bookQueryConfig,
+      onSuccess(books) {
+        for (const book of books) {
+          queryClient.setQueryData(
+            ['book', book.id],
+            book,
+          )
+        }
+      },
+    },
   )
 
   return { ...result, books: result.data ?? loadingBooks }
@@ -41,4 +53,19 @@ function useBook(bookId: string) {
   return data
 }
 
-export { useBookSearch, useBook }
+function useRefetchBookSearchQuery() {
+  const queryClient = useQueryClient()
+  return React.useCallback(
+    async() => {
+      queryClient.removeQueries('bookSearch')
+      await queryClient.prefetchQuery(
+        ['bookSearch', { query: '' }],
+        () => getBooks('').then((data: any) => data.books),
+        bookQueryConfig,
+      )
+    },
+    [queryClient],
+  )
+}
+
+export { useBookSearch, useBook, useRefetchBookSearchQuery }

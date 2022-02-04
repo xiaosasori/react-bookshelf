@@ -3,7 +3,21 @@ import { addListItems, getListItems, removeListItems, updateListItems } from '@/
 import type { ListItem } from '@/types'
 
 function useListItems(): ListItem[] {
-  const { data: listItems } = useQuery('list-items', () => getListItems().then((data: any) => data.listItems))
+  const queryClient = useQueryClient()
+  const { data: listItems } = useQuery(
+    'list-items',
+    () => getListItems().then((data: any) => data.listItems),
+    {
+      onSuccess(listItems) {
+        for (const listItem of listItems) {
+          queryClient.setQueryData(
+            ['book', listItem.book.bookId],
+            listItem.book,
+          )
+        }
+      },
+    },
+  )
 
   return listItems ?? []
 }

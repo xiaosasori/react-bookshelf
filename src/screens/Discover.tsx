@@ -7,16 +7,18 @@ import Spinner from '@/components/base/Spinner'
 import * as colors from '@/styles/colors'
 import BookRow from '@/components/BookRow'
 import type { Book } from '@/types'
-import { useBookSearch } from '@/stores'
+import { useBookSearch, useRefetchBookSearchQuery } from '@/stores'
 
 function Discover() {
   const [query, setQuery] = React.useState('')
   const [queried, setQueried] = React.useState<boolean>()
   const { books, error, isLoading, isError, isSuccess } = useBookSearch(query)
-  // const refetchBookSearchQuery = useRefetchBookSearchQuery()
-  // React.useEffect(() => {
-  //   return () => refetchBookSearchQuery()
-  // }, [refetchBookSearchQuery])
+  const refetchBookSearchQuery = useRefetchBookSearchQuery()
+
+  // @ts-ignore
+  React.useEffect(() => {
+    return () => refetchBookSearchQuery()
+  }, [refetchBookSearchQuery])
 
   function handleSearchClick(event: FormEvent) {
     event.preventDefault()
