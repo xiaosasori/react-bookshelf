@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { FaStar } from 'react-icons/fa'
+import ErrorMessage from './ErrorMessage'
 import * as colors from '@/styles/colors'
 import { useUpdateListItem } from '@/stores/list-items'
 
@@ -18,7 +19,7 @@ function Rating({ listItem }: any) {
   const [isTabbing, setIsTabbing] = React.useState(false)
   // 💰 if you want to get the list-items cache updated after this query finishes
   // the use the `onSettled` config option to queryCache.invalidateQueries('list-items')
-  const { mutateAsync: update } = useUpdateListItem()
+  const { mutateAsync: update, error, isError } = useUpdateListItem()
 
   React.useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -99,6 +100,10 @@ function Rating({ listItem }: any) {
       }}
     >
       <span css={{ display: 'flex' }}>{stars}</span>
+      {isError
+        ? <ErrorMessage error={error} variant="inline" css={{ marginLeft: 6, fontSize: '0.7em' }} />
+        : null
+      }
     </div>
   )
 }

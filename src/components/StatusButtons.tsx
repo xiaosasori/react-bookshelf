@@ -29,10 +29,13 @@ const CircleButton = styled.button({
 })
 
 function TooltipButton({ label, highlight, onClick, icon, ...rest }: any) {
-  const { isLoading, isError, error, run } = useAsync()
+  const { isLoading, isError, error, run, reset } = useAsync()
 
   function handleClick() {
-    run(onClick())
+    if (isError)
+      reset()
+    else
+      run(onClick())
   }
 
   return (

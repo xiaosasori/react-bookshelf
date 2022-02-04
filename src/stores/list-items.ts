@@ -14,30 +14,39 @@ function useListItem(bookId: string) {
   return listItems.find((li: ListItem) => li.bookId === bookId) ?? null
 }
 
-function useUpdateListItem() {
+function useUpdateListItem(options?: any) {
   const queryCache = useQueryClient()
 
   return useMutation(
     (updates: any) => updateListItems(updates.id, updates),
-    { onSettled: () => queryCache.invalidateQueries('list-items') },
+    {
+      onSettled: () => queryCache.invalidateQueries('list-items'),
+      ...options,
+    },
   )
 }
 
-function useRemoveListItem() {
+function useRemoveListItem(options?: any) {
   const queryCache = useQueryClient()
 
   return useMutation(
     (bookId: string) => removeListItems(bookId),
-    { onSettled: () => queryCache.invalidateQueries('list-items') },
+    {
+      onSettled: () => queryCache.invalidateQueries('list-items'),
+      ...options,
+    },
   )
 }
 
-function useCreateListItem() {
+function useCreateListItem(options?: any) {
   const queryCache = useQueryClient()
 
   return useMutation(
     ({ bookId }: any) => addListItems(bookId),
-    { onSettled: () => queryCache.invalidateQueries('list-items') },
+    {
+      onSettled: () => queryCache.invalidateQueries('list-items'),
+      ...options,
+    },
   )
 }
 

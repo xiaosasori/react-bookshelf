@@ -11,6 +11,8 @@ import Rating from '@/components/Rating'
 import { formatDate } from '@/helpers'
 import { useBook } from '@/stores'
 import { useListItem, useUpdateListItem } from '@/stores/list-items'
+import ErrorMessage from '@/components/ErrorMessage'
+import Spinner from '@/components/base/Spinner'
 
 function Book() {
   const { bookId } = useParams()
@@ -100,7 +102,7 @@ function ListItemTimeframe({ listItem }: any) {
 }
 
 function NotesTextarea({ listItem }: any) {
-  const { mutateAsync: mutate } = useUpdateListItem()
+  const { mutateAsync: mutate, isLoading, error, isError } = useUpdateListItem()
 
   const debouncedMutate = React.useMemo(() => debounceFn(mutate, { wait: 300 }), [
     mutate,
@@ -112,7 +114,7 @@ function NotesTextarea({ listItem }: any) {
 
   return (
     <React.Fragment>
-      <div>
+      <div className="flex space-x-1">
         <label
           htmlFor="notes"
           css={{
@@ -125,6 +127,11 @@ function NotesTextarea({ listItem }: any) {
         >
           Notes
         </label>
+        {isError
+          ? <ErrorMessage error={error} variant="inline" css={{ marginLeft: 6, fontSize: '0.7em' }} />
+          : null
+        }
+        {isLoading ? <Spinner /> : null}
       </div>
       <textarea
         id="notes"

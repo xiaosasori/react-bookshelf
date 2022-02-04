@@ -374,12 +374,13 @@ function RequestFailUI() {
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const { requestMethod, urlMatch } = event.target.elements
+    console.log(urlMatch.value)
     setFailConfig(c => [
       ...c,
       { requestMethod: requestMethod.value, urlMatch: urlMatch.value },
     ])
-    requestMethod.value = ''
-    urlMatch.value = ''
+    // requestMethod.value = ''
+    // urlMatch.value = ''
   }
 
   return (

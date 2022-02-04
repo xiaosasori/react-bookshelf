@@ -7,7 +7,7 @@ const errorMessageVariants = {
 
 interface Props {
   variant?: 'stacked' | 'inline'
-  error: Error
+  error: any
   [key: string]: any
 }
 
